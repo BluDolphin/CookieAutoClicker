@@ -78,14 +78,16 @@ def keyLogger(key): # Function for tracking key presses
         try:
             if autoSnapToggle == True:
                 imageLocation = pyautogui.locateOnScreen(cookiepath, grayscale=True, confidence=0.70) # Locate the image on the screen
-                imageLocation = (imageLocation[0], imageLocation[1] - 100, imageLocation[2], imageLocation[3]) # modify y to raise the mouse to middle
+                imageLocation = (imageLo    cation[0], imageLocation[1] - 100, imageLocation[2], imageLocation[3]) # modify y to raise the mouse to middle
                 pyautogui.moveTo(imageLocation) # Move the mouse to the location 
-                
-            clicking = not clicking # Set clicking to the opposite of what it is
-            print (f"Auto clicker: {clicking}") # Print the key pressed
+                clicking = not clicking # Set clicking to the opposite of what it is
+                print (f"Auto clicker: {clicking}") # Print the key pressed
+            
+            if autoSnapToggle == False:    
+                clicking = not clicking # Set clicking to the opposite of what it is
+                print (f"Auto clicker: {clicking}") # Print the key pressed
             
             if clicking == True: # if clicking is true 
-                
                 # Create thread for active function
                 clickingThread = threading.Thread(target=active, args=(delay, button))
                 clickingThread.start()
@@ -93,6 +95,7 @@ def keyLogger(key): # Function for tracking key presses
                 if boundaryToggle == True:
                     boundaryThread = threading.Thread(target=boundary) 
                     boundaryThread.start()
+                    
         except Exception as e:
             print(f"Error: {e}")
             print("No cookie found")

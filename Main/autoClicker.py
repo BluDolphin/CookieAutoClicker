@@ -76,9 +76,12 @@ def keyLogger(key): # Function for tracking key presses
     if clicking == True: # if clicking is true 
         # Create thread for active function
         clickingThread = threading.Thread(target=active, args=(delay, button))
-        boundaryThread = threading.Thread(target=boundary) 
         clickingThread.start()
-        boundaryThread.start()
+        
+        if boundaryToggle == True:
+            boundaryThread = threading.Thread(target=boundary) 
+            boundaryThread.start()
+  
 
 # Create listener for key logging
 with Listener(on_press=keyLogger) as listener:

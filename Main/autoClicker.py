@@ -11,18 +11,19 @@ Features:
 - Clicks fast
 - Stops clicking when mouse is outside of a boundary
 - Automatically moves mouse to image location
+- Can auto find and click on many images
 """
 
 # ================================================================================================
 # SETTINGS
-
 delay = 0.001 # Set delay
 button = Button.left # Set button to press
 startStopKey = KeyCode(char='z') # Set key to start/stop
+frenzyKey = KeyCode(char='x') # Set key to frenzy
 
 boundaryToggle = True # Change to False to disable boundary auto turn off
 autoSnapToggle = True # Change to False to disable auto snap to image
-
+frenzyToggle = True # Change to False to disable frenzy click
 
 # ================================================================================================
 # Advanced settings
@@ -33,19 +34,21 @@ programDirectory = os.path.dirname(os.path.abspath(__file__)) # Gets the directo
 # Set the location of the images
 # By default the images need to be in the same directory as this program
 cookiepath = os.path.join(programDirectory, 'cookie.png')
+frenzyPath = os.path.join(programDirectory, 'frenzyCookie.png')
 
 # ================================================================================================
 print("Auto Clicker Starting\n"
       f"Delay: {delay: 0.001}\n"
       f"Auto click button: {button}\n"
-      f"Start/Stop button: {startStopKey}")
+      f"Start/Stop button: {startStopKey}\n"
+      f"Frenzy button: {frenzyKey}\n")
 
 
 mouse = Controller() # Create mouse object
 clicking = False # Set clicking to false
 
 def active(delay, button): # Function to click
-    while clicking == True: # While truez
+    while clicking == True: # While true
         mouse.click(button) # Click the button
         time.sleep(delay) # Sleep for the delay
     return
@@ -73,12 +76,12 @@ def boundary(): # Function to check if the mouse is in the boundary+
 
 
 def keyLogger(key): # Function for tracking key presses
-    global clicking, imageLocation
+    global clicking
     if key == startStopKey: # If the key pressed is the start/stop key
         try:
             if autoSnapToggle == True:
                 imageLocation = pyautogui.locateOnScreen(cookiepath, grayscale=True, confidence=0.70) # Locate the image on the screen
-                imageLocation = (imageLo    cation[0], imageLocation[1] - 100, imageLocation[2], imageLocation[3]) # modify y to raise the mouse to middle
+                imageLocation = (imageLocation[0], imageLocation[1] - 100, imageLocation[2], imageLocation[3]) # modify y to raise the mouse to middle
                 pyautogui.moveTo(imageLocation) # Move the mouse to the location 
                 clicking = not clicking # Set clicking to the opposite of what it is
                 print (f"Auto clicker: {clicking}") # Print the key pressed
@@ -86,6 +89,7 @@ def keyLogger(key): # Function for tracking key presses
             if autoSnapToggle == False:    
                 clicking = not clicking # Set clicking to the opposite of what it is
                 print (f"Auto clicker: {clicking}") # Print the key pressed
+            
             
             if clicking == True: # if clicking is true 
                 # Create thread for active function
@@ -95,12 +99,26 @@ def keyLogger(key): # Function for tracking key presses
                 if boundaryToggle == True:
                     boundaryThread = threading.Thread(target=boundary) 
                     boundaryThread.start()
-                    
+                
         except Exception as e:
             print(f"Error: {e}")
             print("No cookie found")
             clicking = False
-
-# Create listener for key logging
+    
+    if key == frenzyKey and frenzyToggle == True: # If the key pressed is the frenzy key
+        clicking = False # Set clicking to false to disable if auto clicker is currently running
+        
+        while True: # While true
+            try:
+                for pos in pyautogui.locateAllOnScreen(frenzyPath, grayscale=True, confidence=0.7): # Locate all the images on the screen
+                    pyautogui.moveTo(pos) # Move the mouse to the location
+                    mouse.click(Button.left) # Click the button
+                    
+            except Exception as e: # Exit on no frenzy cookie found
+                print(f"Error: {e}")
+                print("No frenzy cookie found") # Print if no cookie is found
+                break # Break the loop
+            
+# Create listener for key logging and start keyLogger function
 with Listener(on_press=keyLogger) as listener:
     listener.join() 

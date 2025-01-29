@@ -110,7 +110,7 @@ def keyLogger(key): # Function for tracking key presses
         
         while True: # While true
             try:
-                for pos in pyautogui.locateAllOnScreen(frenzyPath, grayscale=True, confidence=0.7): # Locate all the images on the screen
+                for pos in pyautogui.locateAllOnScreen(frenzyPath, grayscale=True, confidence=0.5): # Locate all the images on the screen
                     pyautogui.moveTo(pos) # Move the mouse to the location
                     mouse.click(Button.left) # Click the button
                     

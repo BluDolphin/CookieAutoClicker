@@ -5,9 +5,12 @@ import time, threading, os, pyautogui
 """_summary_
 Auto clicker script with boundary check
 
+ONLY WORKS ON WINDOWS
+
 Features:
 - Clicks fast
 - Stops clicking when mouse is outside of a boundary
+- Automatically moves mouse to image location
 """
 
 # ================================================================================================
@@ -18,11 +21,8 @@ button = Button.left # Set button to press
 startStopKey = KeyCode(char='z') # Set key to start/stop
 
 boundaryToggle = True # Change to False to disable boundary auto turn off
+autoSnapToggle = True # Change to False to disable auto snap to image
 
-print("Auto Clicker Starting\n"
-      f"Delay: {delay}\n"
-      f"Auto click button: {button}\n"
-      f"Start/Stop button: {startStopKey}")
 
 # ================================================================================================
 # Advanced settings
@@ -35,12 +35,17 @@ programDirectory = os.path.dirname(os.path.abspath(__file__)) # Gets the directo
 cookiepath = os.path.join(programDirectory, 'cookie.png')
 
 # ================================================================================================
+print("Auto Clicker Starting\n"
+      f"Delay: {delay: 0.001}\n"
+      f"Auto click button: {button}\n"
+      f"Start/Stop button: {startStopKey}")
+
+
 mouse = Controller() # Create mouse object
 clicking = False # Set clicking to false
 
-
 def active(delay, button): # Function to click
-    while clicking == True: # While true
+    while clicking == True: # While truez
         mouse.click(button) # Click the button
         time.sleep(delay) # Sleep for the delay
     return
@@ -68,20 +73,30 @@ def boundary(): # Function to check if the mouse is in the boundary+
 
 
 def keyLogger(key): # Function for tracking key presses
-    global clicking 
+    global clicking, imageLocation
     if key == startStopKey: # If the key pressed is the start/stop key
-        clicking = not clicking # Set clicking to the opposite of what it is
-        print (f"Auto clicker: {clicking}") # Print the key pressed
-    
-    if clicking == True: # if clicking is true 
-        # Create thread for active function
-        clickingThread = threading.Thread(target=active, args=(delay, button))
-        clickingThread.start()
-        
-        if boundaryToggle == True:
-            boundaryThread = threading.Thread(target=boundary) 
-            boundaryThread.start()
-  
+        try:
+            if autoSnapToggle == True:
+                imageLocation = pyautogui.locateOnScreen(cookiepath, grayscale=True, confidence=0.70) # Locate the image on the screen
+                imageLocation = (imageLocation[0], imageLocation[1] - 100, imageLocation[2], imageLocation[3]) # modify y to raise the mouse to middle
+                pyautogui.moveTo(imageLocation) # Move the mouse to the location 
+                
+            clicking = not clicking # Set clicking to the opposite of what it is
+            print (f"Auto clicker: {clicking}") # Print the key pressed
+            
+            if clicking == True: # if clicking is true 
+                
+                # Create thread for active function
+                clickingThread = threading.Thread(target=active, args=(delay, button))
+                clickingThread.start()
+                
+                if boundaryToggle == True:
+                    boundaryThread = threading.Thread(target=boundary) 
+                    boundaryThread.start()
+        except Exception as e:
+            print(f"Error: {e}")
+            print("No cookie found")
+            clicking = False
 
 # Create listener for key logging
 with Listener(on_press=keyLogger) as listener:

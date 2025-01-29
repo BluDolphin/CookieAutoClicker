@@ -17,14 +17,12 @@ delay = 0.001 # Set delay
 button = Button.left # Set button to press
 startStopKey = KeyCode(char='z') # Set key to start/stop
 
+boundaryToggle = True # Change to False to disable boundary auto turn off
+
 print("Auto Clicker Starting\n"
       f"Delay: {delay}\n"
       f"Auto click button: {button}\n"
       f"Start/Stop button: {startStopKey}")
-
-mouse = Controller() # Create mouse object
-clicking = False # Set clicking to false
-
 
 # ================================================================================================
 # Advanced settings
@@ -35,9 +33,12 @@ programDirectory = os.path.dirname(os.path.abspath(__file__)) # Gets the directo
 # Set the location of the images
 # By default the images need to be in the same directory as this program
 cookiepath = os.path.join(programDirectory, 'cookie.png')
-frenzyPath = os.path.join(programDirectory, 'frenzyCookie.png')
 
 # ================================================================================================
+mouse = Controller() # Create mouse object
+clicking = False # Set clicking to false
+
+
 def active(delay, button): # Function to click
     while clicking == True: # While true
         mouse.click(button) # Click the button

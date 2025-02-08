@@ -5,13 +5,11 @@ import time, threading, os, pyautogui
 """_summary_
 Auto clicker script with boundary check
 
-ONLY WORKS ON WINDOWS
-
 Features:
 - Clicks fast
 - Stops clicking when mouse is outside of a boundary
-- Automatically moves mouse to image location
-- Can auto find and click on many images
+- Automatically moves mouse to image location (Winodws only)
+- Can auto find and click on many images (Windows only)
 """
 
 # ================================================================================================
@@ -43,6 +41,12 @@ print("Auto Clicker Starting\n"
       f"Start/Stop button: {startStopKey}\n"
       f"Frenzy button: {frenzyKey}\n")
 
+# check if os is not windows
+# Auto disable features if not supported on Linux (probs MacOS too
+if os.name != 'nt':
+    print("Auto snap to image & Frenzy mode is disabled as it is not supported on this OS z\nSorry, i'm working on implementing it currently")
+    autoSnapToggle = False
+    frenzyToggle = False
 
 mouse = Controller() # Create mouse object
 clicking = False # Set clicking to false

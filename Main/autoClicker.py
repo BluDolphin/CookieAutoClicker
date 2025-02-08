@@ -11,6 +11,7 @@ Features:
 - Automatically moves mouse to image location (Winodws only)
 - Can auto find and click on many images (Windows only)
 """
+
 # check if os is not windows 
 if os.name != 'nt':
     nonWindows = True

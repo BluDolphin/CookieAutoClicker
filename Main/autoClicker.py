@@ -50,6 +50,7 @@ if os.name != 'nt':
 
 mouse = Controller() # Create mouse object
 clicking = False # Set clicking to false
+pyautogui.PAUSE = 0.01 # Delay for pyautogui between image searches
 
 def active(delay, button): # Function to click
     while clicking == True: # While true

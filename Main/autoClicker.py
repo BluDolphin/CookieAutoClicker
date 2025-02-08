@@ -12,6 +12,7 @@ Features:
 - Can auto find and click on many images (Windows only)
 """
 # check if os is not windows 
+nonWindows = False
 if os.name != 'nt':
     nonWindows = True
     
@@ -44,6 +45,7 @@ print("Auto Clicker Starting\n"
       f"Start/Stop button: {startStopKey}\n"
       f"Frenzy button: {frenzyKey}\n")
 
+# Auto disable features if not supported on Linux (probs MacOS too)
 if nonWindows == True:
     print("Auto snap to image & Frenzy mode is disabled as it is not supported on this OS z\nSorry, i'm working on implementing it currently")
     autoSnapToggle = False

@@ -12,6 +12,7 @@ Features:
 - Can auto find and click on many images (Windows only)
 """
 
+
 # ================================================================================================
 # SETTINGS
 delay = 0.001 # Set delay
@@ -50,6 +51,7 @@ if os.name != 'nt':
 
 mouse = Controller() # Create mouse object
 clicking = False # Set clicking to false
+frenzy = False # Set frenzy to false
 pyautogui.PAUSE = 0.01 # Delay for pyautogui between image searches
 
 def active(delay, button): # Function to click
@@ -83,7 +85,7 @@ def boundary(): # Function to check if the mouse is in the boundary+
 def keyLogger(key): # Function for tracking key presses
     global clicking
     if key == startStopKey: # If the key pressed is the start/stop key
-        try:
+        try: 
             if autoSnapToggle == True:
                 imageLocation = pyautogui.locateOnScreen(cookiepath, grayscale=True, confidence=0.70) # Locate the image on the screen
                 imageLocation = (imageLocation[0], imageLocation[1] - 100, imageLocation[2], imageLocation[3]) # modify y to raise the mouse to middle
@@ -111,19 +113,22 @@ def keyLogger(key): # Function for tracking key presses
             clicking = False
     
     if key == frenzyKey and frenzyToggle == True: # If the key pressed is the frenzy key
+        print("Frenzy mode: On") # Print frenzy mode is true
         clicking = False # Set clicking to false to disable if auto clicker is currently running
-        
-        while True: # While true
+        frenzy = True # Set frenzy to true
+
+        while frenzy == True: # While true
             try:
-                for pos in pyautogui.locateAllOnScreen(frenzyPath, grayscale=True, confidence=0.5): # Locate all the images on the screen
+                for pos in pyautogui.locateAllOnScreen(frenzyPath, grayscale=True, confidence=0.8): # Locate all the images on the screen
                     pyautogui.moveTo(pos) # Move the mouse to the location
                     mouse.click(Button.left) # Click the button
                     
             except Exception as e: # Exit on no frenzy cookie found
                 print(f"Error: {e}")
                 print("No frenzy cookie found") # Print if no cookie is found
+                frenzy = False
                 break # Break the loop
-            
+
 # Create listener for key logging and start keyLogger function
 with Listener(on_press=keyLogger) as listener:
     listener.join() 

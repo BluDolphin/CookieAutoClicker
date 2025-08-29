@@ -35,24 +35,30 @@ programDirectory = os.path.dirname(os.path.abspath(__file__)) # Gets the directo
 cookiepath = os.path.join(programDirectory, 'cookie.png')
 frenzyPath = os.path.join(programDirectory, 'frenzyCookie.png')
 
-# ================================================================================================
-print("Auto Clicker Starting\n"
-      f"Delay: {delay: 0.001}\n"
-      f"Auto click button: {button}\n"
-      f"Start/Stop button: {startStopKey}\n"
-      f"Frenzy button: {frenzyKey}\n")
-
 # check if os is not windows
-# Auto disable features if not supported on Linux (probs MacOS too
 if os.name != 'nt':
     print("Auto snap to image & Frenzy mode is disabled as it is not supported on this OS z\nSorry, i'm working on implementing it currently")
     autoSnapToggle = False
     frenzyToggle = False
+    
+# ================================================================================================
+
 
 mouse = Controller() # Create mouse object
 clicking = False # Set clicking to false
 frenzy = False # Set frenzy to false
 pyautogui.PAUSE = 0.01 # Delay for pyautogui between image searches
+
+def displayStats():
+    print("\n\n\n\n\n\n\n\n\n\n")
+    print("Auto Clicker Starting\n"
+        f"Delay: {delay}\n"
+        f"Clicking: {clicking}\n"
+        f"Auto click button: {button}\n"
+        f"Start/Stop button: {startStopKey}\n"
+        f"Frenzy Running: {frenzy}\n"
+        f"Frenzy button: {frenzyKey}\n")
+displayStats()
 
 def active(delay, button): # Function to click
     while clicking == True: # While true
@@ -85,6 +91,7 @@ def boundary(): # Function to check if the mouse is in the boundary+
 def keyLogger(key): # Function for tracking key presses
     global clicking
     if key == startStopKey: # If the key pressed is the start/stop key
+        displayStats()
         try: 
             if autoSnapToggle == True:
                 imageLocation = pyautogui.locateOnScreen(cookiepath, grayscale=True, confidence=0.70) # Locate the image on the screen
@@ -113,7 +120,7 @@ def keyLogger(key): # Function for tracking key presses
             clicking = False
     
     if key == frenzyKey and frenzyToggle == True: # If the key pressed is the frenzy key
-        print("Frenzy mode: On") # Print frenzy mode is true
+        displayStats()
         clicking = False # Set clicking to false to disable if auto clicker is currently running
         frenzy = True # Set frenzy to true
 
@@ -128,7 +135,7 @@ def keyLogger(key): # Function for tracking key presses
                 print("No frenzy cookie found") # Print if no cookie is found
                 frenzy = False
                 break # Break the loop
-
+    
 # Create listener for key logging and start keyLogger function
 with Listener(on_press=keyLogger) as listener:
     listener.join() 

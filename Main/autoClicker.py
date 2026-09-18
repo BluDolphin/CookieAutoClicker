@@ -38,26 +38,15 @@ cookiepath = os.path.join(programDirectory, 'cookie.png')
 frenzyPath = os.path.join(programDirectory, 'frenzyCookie.png')
 fortunePath = os.path.join(programDirectory, 'fortuneNews.png')
 
-# ================================================================================================
-print("Auto Clicker Starting\n"
-      f"Delay: {delay: 0.001}\n"
-      f"Auto click button: {button}\n"
-      f"Start/Stop button: {startStopKey}\n"
-      f"Frenzy button: {frenzyKey}\n")
-
 # check if os is not windows
-# Auto disable features if not supported on Linux (probs MacOS too
 if os.name != 'nt':
-    print("Auto snap to image & Frenzy mode is disabled as it is not supported on this OS currently")
+    print("Auto snap to image & Frenzy mode is disabled as it is not supported on this OS z\nSorry, i'm working on implementing it currently")
     autoSnapToggle = False
     frenzyToggle = False
-<<<<<<< Updated upstream
-=======
     fortuneAutoClickToggle = False
     
 # ================================================================================================
 
->>>>>>> Stashed changes
 
 mouse = Controller() # Create mouse object
 clicking = False # Set clicking to false
@@ -65,9 +54,6 @@ frenzy = False # Set frenzy to false
 fortuneAutoClick = False # Set fortune auto click to false
 pyautogui.PAUSE = 0.01 # Delay for pyautogui between image searches
 
-<<<<<<< Updated upstream
-def active(delay, button): # Function to click
-=======
 
 def find_image_center(image_path, confidence=0.70, grayscale=True):
     location = pyautogui.locateOnScreen(image_path, grayscale=grayscale, confidence=confidence)
@@ -96,7 +82,6 @@ displayStats()
 
 
 def active(delay): # Function to click
->>>>>>> Stashed changes
     while clicking == True: # While true
         mouse.click(Button.left) # Click the button
         time.sleep(delay) # Sleep for the delay
@@ -124,38 +109,14 @@ def boundary(): # Function to check if the mouse is in the boundary+
                 time.sleep(0.1) # Sleep for 0.1 seconds
 
 def fortuneNewsCheck(delay): # Function to check for fortune news
-    global clicking
     while fortuneAutoClick == True: # While true
-        reactivateClicking = False # Set reactivateClicking to false
         try:
             time.sleep(delay) # Sleep for the delay
             imageLocation = pyautogui.locateOnScreen(fortunePath, grayscale=True, confidence=0.70) # Locate the image on the screenz            
-            
-            # If clicking is true then set reactivateClicking to true
-            if clicking == True:
-                reactivateClicking = True 
-                
-            currentMousePos = pyautogui.position() # Get current mouse pos
-            
+
             pyautogui.moveTo(imageLocation) # Move the mouse to the location
             mouse.click(Button.left) # Click the button
             print("Fortune news clicked") # Print that the fortune news was clicked
-            
-            pyautogui.moveTo(currentMousePos) # Move the mouse back to the original position
-            
-            # If reactivateClicking is true then set clicking to true
-            if reactivateClicking == True: 
-                clicking = True
-                print(f"Auto clicker: {clicking}") # Print the clicking status
-                
-                # Create thread for active function
-                clickingThread = threading.Thread(target=active, args=(autoClickDelay,))
-                clickingThread.start()
-                
-                # Create thread for boundary functionality
-                if boundaryToggle == True:
-                    boundaryThread = threading.Thread(target=boundary) 
-                    boundaryThread.start()
             
         except Exception as e:
             continue
@@ -199,10 +160,6 @@ def keyLogger(key): # Function for tracking key presses
 
     
     if key == frenzyKey and frenzyToggle == True: # If the key pressed is the frenzy key
-<<<<<<< Updated upstream
-        print("Frenzy mode: On") # Print frenzy mode is true
-=======
->>>>>>> Stashed changes
         clicking = False # Set clicking to false to disable if auto clicker is currently running
         frenzy = True # Set frenzy to true
         displayStats()
@@ -220,8 +177,6 @@ def keyLogger(key): # Function for tracking key presses
                 frenzy = False
                 displayStats()
                 break # Break the loop
-<<<<<<< Updated upstream
-=======
     
     if key == fortuneKey and fortuneAutoClickToggle == True: # If the key pressed is the fortune toggle is enabled
         fortuneAutoClick = not fortuneAutoClick # flip fortune toggle
@@ -233,7 +188,6 @@ def keyLogger(key): # Function for tracking key presses
             
         displayStats()
         
->>>>>>> Stashed changes
 
 # Create listener for key logging and start keyLogger function
 with Listener(on_press=keyLogger) as listener:

@@ -40,7 +40,7 @@ fortunePath = os.path.join(programDirectory, 'fortuneNews.png')
 
 # check if os is not windows
 if os.name != 'nt':
-    print("Auto snap to image & Frenzy mode is disabled as it is not supported on this OS z\nSorry, i'm working on implementing it currently")
+    print("Auto snap to image & Frenzy mode is disabled as it is not supported on this OS")
     autoSnapToggle = False
     frenzyToggle = False
     fortuneAutoClickToggle = False

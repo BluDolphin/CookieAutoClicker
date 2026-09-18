@@ -15,25 +15,28 @@ Features:
 
 # ================================================================================================
 # SETTINGS
-delay = 0.001 # Set delay
-button = Button.left # Set button to press
+autoClickDelay = 0.001 # Set auto clicker delay
 startStopKey = KeyCode(char='z') # Set key to start/stop
 frenzyKey = KeyCode(char='x') # Set key to frenzy
+fortuneKey = KeyCode(char='c') # Set key to fortune click
+fortuneNewsDelay = 5 # Set delay for checking for fortune news
 
 boundaryToggle = True # Change to False to disable boundary auto turn off
 autoSnapToggle = True # Change to False to disable auto snap to image
 frenzyToggle = True # Change to False to disable frenzy click
+fortuneAutoClickToggle = True # Change to False to disable auto click on fortune news
 
 # ================================================================================================
 # Advanced settings
 
 # Get script directory
-programDirectory = os.path.dirname(os.path.abspath(__file__)) # Gets the directory of the script and passes it to get the directory
+programDirectory = os.path.dirname(os.path.abspath(__file__)) # Gcets the directory of the script and passes it to get the directory
 
 # Set the location of the images
 # By default the images need to be in the same directory as this program
 cookiepath = os.path.join(programDirectory, 'cookie.png')
 frenzyPath = os.path.join(programDirectory, 'frenzyCookie.png')
+fortunePath = os.path.join(programDirectory, 'fortuneNews.png')
 
 # ================================================================================================
 print("Auto Clicker Starting\n"
@@ -48,15 +51,54 @@ if os.name != 'nt':
     print("Auto snap to image & Frenzy mode is disabled as it is not supported on this OS currently")
     autoSnapToggle = False
     frenzyToggle = False
+<<<<<<< Updated upstream
+=======
+    fortuneAutoClickToggle = False
+    
+# ================================================================================================
+
+>>>>>>> Stashed changes
 
 mouse = Controller() # Create mouse object
 clicking = False # Set clicking to false
 frenzy = False # Set frenzy to false
+fortuneAutoClick = False # Set fortune auto click to false
 pyautogui.PAUSE = 0.01 # Delay for pyautogui between image searches
 
+<<<<<<< Updated upstream
 def active(delay, button): # Function to click
+=======
+
+def find_image_center(image_path, confidence=0.70, grayscale=True):
+    location = pyautogui.locateOnScreen(image_path, grayscale=grayscale, confidence=confidence)
+    if location is None:
+        return None
+    return pyautogui.center(location)
+
+
+def displayStats():
+    print("\n\n\n\n\n\n\n\n\n\n")
+    print("Auto Clicker Starting\n"
+        f"Start/Stop button: {startStopKey}\n"
+        f"Frenzy button: {frenzyKey}\n"
+        f"Fortune button: {fortuneKey}\n\n"
+        
+        f"Auto Clicker Delay: {autoClickDelay}\n"
+        f"Fortune News Delay: {fortuneNewsDelay}\n\n"
+        
+        f"Clicking: {clicking}\n"
+        f"Frenzy Running: {frenzy}\n"
+        f"Fortune Auto Click: {fortuneAutoClick}\n")
+displayStats()
+
+
+# ---------------------------------------------------------
+
+
+def active(delay): # Function to click
+>>>>>>> Stashed changes
     while clicking == True: # While true
-        mouse.click(button) # Click the button
+        mouse.click(Button.left) # Click the button
         time.sleep(delay) # Sleep for the delay
     return
 
@@ -81,9 +123,50 @@ def boundary(): # Function to check if the mouse is in the boundary+
                 print(f"Auto clicker: {clicking}") # Print the clicking status
                 time.sleep(0.1) # Sleep for 0.1 seconds
 
+def fortuneNewsCheck(delay): # Function to check for fortune news
+    global clicking
+    while fortuneAutoClick == True: # While true
+        reactivateClicking = False # Set reactivateClicking to false
+        try:
+            time.sleep(delay) # Sleep for the delay
+            imageLocation = pyautogui.locateOnScreen(fortunePath, grayscale=True, confidence=0.70) # Locate the image on the screenz            
+            
+            # If clicking is true then set reactivateClicking to true
+            if clicking == True:
+                reactivateClicking = True 
+                
+            currentMousePos = pyautogui.position() # Get current mouse pos
+            
+            pyautogui.moveTo(imageLocation) # Move the mouse to the location
+            mouse.click(Button.left) # Click the button
+            print("Fortune news clicked") # Print that the fortune news was clicked
+            
+            pyautogui.moveTo(currentMousePos) # Move the mouse back to the original position
+            
+            # If reactivateClicking is true then set clicking to true
+            if reactivateClicking == True: 
+                clicking = True
+                print(f"Auto clicker: {clicking}") # Print the clicking status
+                
+                # Create thread for active function
+                clickingThread = threading.Thread(target=active, args=(autoClickDelay,))
+                clickingThread.start()
+                
+                # Create thread for boundary functionality
+                if boundaryToggle == True:
+                    boundaryThread = threading.Thread(target=boundary) 
+                    boundaryThread.start()
+            
+        except Exception as e:
+            continue
+    return
+
+# ----------------------------czz-----------------------------
+
 
 def keyLogger(key): # Function for tracking key presses
-    global clicking
+    global clicking, fortuneAutoClick, frenzy
+    
     if key == startStopKey: # If the key pressed is the start/stop key
         try: 
             if autoSnapToggle == True:
@@ -91,43 +174,66 @@ def keyLogger(key): # Function for tracking key presses
                 imageLocation = (imageLocation[0], imageLocation[1] - 100, imageLocation[2], imageLocation[3]) # modify y to raise the mouse to middle
                 pyautogui.moveTo(imageLocation) # Move the mouse to the location 
                 clicking = not clicking # Set clicking to the opposite of what it is
-                print (f"Auto clicker: {clicking}") # Print the key pressed
             
             if autoSnapToggle == False:    
                 clicking = not clicking # Set clicking to the opposite of what it is
-                print (f"Auto clicker: {clicking}") # Print the key pressed
             
             
             if clicking == True: # if clicking is true 
                 # Create thread for active function
-                clickingThread = threading.Thread(target=active, args=(delay, button))
+                clickingThread = threading.Thread(target=active, args=(autoClickDelay,))
                 clickingThread.start()
                 
                 if boundaryToggle == True:
                     boundaryThread = threading.Thread(target=boundary) 
                     boundaryThread.start()
+            displayStats()
                 
         except Exception as e:
+            clicking = False
+            displayStats()
+            
             print(f"Error: {e}")
             print("No cookie found")
-            clicking = False
+            
+
     
     if key == frenzyKey and frenzyToggle == True: # If the key pressed is the frenzy key
+<<<<<<< Updated upstream
         print("Frenzy mode: On") # Print frenzy mode is true
+=======
+>>>>>>> Stashed changes
         clicking = False # Set clicking to false to disable if auto clicker is currently running
         frenzy = True # Set frenzy to true
+        displayStats()
+
 
         while frenzy == True: # While true
             try:
                 for pos in pyautogui.locateAllOnScreen(frenzyPath, grayscale=True, confidence=0.8): # Locate all the images on the screen
-                    pyautogui.moveTo(pos) # Move the mouse to the location
+                    pyautogui.moveTo(pyautogui.center(pos)) # Move the mouse to the center of the image
                     mouse.click(Button.left) # Click the button
                     
             except Exception as e: # Exit on no frenzy cookie found
                 print(f"Error: {e}")
                 print("No frenzy cookie found") # Print if no cookie is found
                 frenzy = False
+                displayStats()
                 break # Break the loop
+<<<<<<< Updated upstream
+=======
+    
+    if key == fortuneKey and fortuneAutoClickToggle == True: # If the key pressed is the fortune toggle is enabled
+        fortuneAutoClick = not fortuneAutoClick # flip fortune toggle
+        
+        # if fortuneAutoClick is true 
+        if fortuneAutoClick == True:
+            fortuneNewsThread = threading.Thread(target=fortuneNewsCheck, args=(fortuneNewsDelay,)) # create thread to check for news
+            fortuneNewsThread.start()
+            
+        displayStats()
+        
+>>>>>>> Stashed changes
 
 # Create listener for key logging and start keyLogger function
 with Listener(on_press=keyLogger) as listener:

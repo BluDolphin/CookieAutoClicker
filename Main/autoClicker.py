@@ -18,7 +18,7 @@ Features:
 autoClickDelay = 0.001 # Set auto clicker delay
 startStopKey = KeyCode(char='z') # Set key to start/stop
 frenzyKey = KeyCode(char='x') # Set key to frenzy
-fortuneKey = KeyCode(char='c') # Set key to fortune click
+fortuneKey = KeyCode(char='\\') # Set key to fortune click
 fortuneNewsDelay = 5 # Set delay for checking for fortune news
 
 boundaryToggle = True # Change to False to disable boundary auto turn off
@@ -105,19 +105,45 @@ def boundary(): # Function to check if the mouse is in the boundary+
                  boundary[2] < mousePosition[1] < boundary[3]): # If the mouse is within the y range
                 
                 clicking = False # If the mouse is outside of the range then set clicking to false
-                print(f"Auto clicker: {clicking}") # Print the clicking status
+                print(f"Auto clicker disabled") # Print the clicking status
                 time.sleep(0.1) # Sleep for 0.1 seconds
 
 def fortuneNewsCheck(delay): # Function to check for fortune news
+    global clicking
     while fortuneAutoClick == True: # While true
+        reactivateClicking = False # Set reactivateClicking to false
+
         try:
             time.sleep(delay) # Sleep for the delay
             imageLocation = pyautogui.locateOnScreen(fortunePath, grayscale=True, confidence=0.70) # Locate the image on the screenz            
-
+            
+            # If clicking is true then set reactivateClicking to true
+            if clicking == True:
+                reactivateClicking = True 
+                
+            originalMousePos = pyautogui.position() # Get current mouse pos
+            
             pyautogui.moveTo(imageLocation) # Move the mouse to the location
             mouse.click(Button.left) # Click the button
             print("Fortune news clicked") # Print that the fortune news was clicked
             
+            pyautogui.moveTo(originalMousePos) # Move the mouse back to the original position
+            
+            
+            # If reactivateClicking is true then set clicking to true
+            if reactivateClicking == True: 
+                clicking = True
+                print(f"Auto clicker re-enabled") # Print the clicking status
+                
+                # Create thread for active function
+                clickingThread = threading.Thread(target=active, args=(autoClickDelay,))
+                clickingThread.start()
+                
+                # Create thread for boundary functionality
+                if boundaryToggle == True:
+                    boundaryThread = threading.Thread(target=boundary) 
+                    boundaryThread.start()
+
         except Exception as e:
             continue
     return
